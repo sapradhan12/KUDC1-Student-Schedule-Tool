@@ -89,7 +89,6 @@ custom_css="""
 """
 
 calendar = calendar(events=calendar_events, options=calendar_options, custom_css=custom_css)
-st.write(calendar)
 
 # To-Do List
 st.subheader("To-Do List")
