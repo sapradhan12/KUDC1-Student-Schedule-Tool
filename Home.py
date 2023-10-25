@@ -38,29 +38,49 @@ conn.commit()
 st.title("High School Planner")
 st.write("Welcome to your digital planner!")
 
-# To-Do List
 st.subheader("To-Do List")
-task = st.text_input("Add a new task:")
-due_date_input = st.date_input("Due date:", value=None)
+new_task_name = st.text_input("Add a new task:")
+new_due_date = st.date_input("Due date:", value=None)
+
 if st.button("Add Task"):
-    cursor.execute("INSERT INTO tasks (task) VALUES (?)", (task,))
-    cursor.execute("INSERT INTO due_date (due_date_input) VALUES (?)", (due_date_input,))
+    cursor.execute("INSERT INTO tasks (task) VALUES (?)", (new_task_name,))
+    cursor.execute("INSERT INTO due_date (due_date_input) VALUES (?)", (new_due_date,))
     conn.commit()
-    st.write(f"Task added: {task}")
+    st.write(f"Task added: {new_task_name}")
 
 # View all tasks
-#if st.button("View All Tasks"):
-st.subheader("All Tasks")
-tasks = cursor.execute("SELECT task FROM tasks").fetchall()
-due_dates = cursor.execute("SELECT due_date_input FROM due_date").fetchall()
-for i, task, due_date_input in range(enumerate(enumerate(tasks), enumerate(due_dates))):
-    st.write(f"{i + 1}. {int(task)}, due {int(due_date_input)}.")
+if st.button("View All Tasks"):
+    st.subheader("All Tasks")
+    #tasks = cursor.execute("SELECT new_task_name FROM tasks").fetchall()
+    #due_dates = cursor.execute("SELECT new_due_date FROM due_date").fetchall()
+    check_list = []
+    task_list = []
+    due_date_list = []
 
-'''
-for i, due_date_input in enumerate(due_dates):
-    st.write(f"Due {due_date_input}.")
-    st.checkbox("Done?", key=i)
-'''
+    df = pd.DataFrame(
+        {
+            "Check": check_list,
+            "Task": task_list,
+            "Due Date": due_date_list
+        }
+    )
+
+    for i in task_list:
+        new_task = [None, new_task_name, new_due_date]
+        df.loc[len(df)] = new_task
+
+    st.data_editor(
+        df,
+        column_config={
+            "Check": st.column_config.CheckboxColumn(
+                #"Check",
+                #help="Check the box if you've completed the task",
+                #=False,
+            )
+        },
+        hide_index=True,
+    )
+    
 # Notes and Resources
 st.subheader("Notes and Resources")
 note = st.text_area("Add a note or resource:")
