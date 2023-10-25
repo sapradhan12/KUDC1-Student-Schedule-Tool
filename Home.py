@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 from streamlit_calendar import calendar
+import datetime
 
 # Create or connect to an SQLite database
 conn = sqlite3.connect('planner.db')
@@ -11,6 +12,12 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY,
         task TEXT
+    )
+''')
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS due_date (
+        id INTEGER PRIMARY KEY,
+        due_date TEXT
     )
 ''')
 cursor.execute('''
@@ -93,17 +100,29 @@ calendar = calendar(events=calendar_events, options=calendar_options, custom_css
 # To-Do List
 st.subheader("To-Do List")
 task = st.text_input("Add a new task:")
+due_date_input = st.date_input("Due date:", value=None)
 if st.button("Add Task"):
     cursor.execute("INSERT INTO tasks (task) VALUES (?)", (task,))
+    cursor.execute("INSERT INTO due_date (due_date_input) VALUES (?)", (due_date,))
     conn.commit()
     st.write(f"Task added: {task}")
+    
 
 # View all tasks
 if st.button("View All Tasks"):
     st.subheader("All Tasks")
     tasks = cursor.execute("SELECT task FROM tasks").fetchall()
-    for i, task in enumerate(tasks):
-        st.write(f"{i + 1}. {task[0]}")
+    due_dates = cursor.execute("SELECT due_date_input FROM due_date".fetchall()
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        for task in enumerate(tasks):
+            st.checkbox()
+    with col2:
+        for task in enumerate(tasks):
+            st.text_input(, task[0])
+    with col3:
+        for due_date in enumerate(due_dates):
+            st.date_input(, value=due_date_input)
 
 # Notes and Resources
 st.subheader("Notes and Resources")
