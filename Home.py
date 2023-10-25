@@ -103,7 +103,7 @@ if st.button("View All Tasks"):
     st.subheader("All Tasks")
     tasks = cursor.execute("SELECT task FROM tasks").fetchall()
     for i, task in enumerate(tasks):
-        st.write(f"{i + 1}. {task[0]}")
+        st.write(f"{i + 1}. {task[0]}    {st.checkbox("Done")}")
 
 # Notes and Resources
 st.subheader("Notes and Resources")
